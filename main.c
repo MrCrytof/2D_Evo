@@ -87,30 +87,29 @@ int main(void)
         // Очищаем экран тёмным цветом
         ClearBackground((Color){20, 24, 35, 255});
         dt = GetFrameTime();
-        //спавн еди
-        for (int j = 0; j < MAX_FOOD; j++) {
-            if (food[j].alive == false) {
-                food[j].alive = true;
-                food[j].x = rand() % (900 - 100) + 100;
-                food[j].y = rand() % (600 - 100) + 100;
-            }
-            for (int i = 0; i < cout; i++) {
+        for (int i = 0; i < cout; i++) {
+            int nearestFood = -1;
+            float minDistans = 100000;
+            for (int j = 0; j < MAX_FOOD; j++) {
+                if (food[j].alive == true) {
+                    vectx = food[j].x - organisms[i].x;
+                    vecty = food[j].y - organisms[i].y;
 
-                vectx = food[j].x - organisms[i].x;
-                vecty = food[j].y - organisms[i].y;
+                    L = sqrtf((vectx * vectx) + (vecty * vecty));
+                    if (L < minDistans) {
+                        minDistans = L;
+                        nearestFood = j;
+                    }
+                }
+            }
+            if (nearestFood != -1) {
+                vectx = food[nearestFood].x - organisms[i].x;
+                vecty = food[nearestFood].y - organisms[i].y;
 
                 L = sqrtf((vectx * vectx) + (vecty * vecty));
-
-                // Перевіряємо, що відстань не дорівнює нулю,
-                // щоб уникнути ділення на нуль
                 if (L > 0) {
                     organisms[i].dx = vectx / L;
                     organisms[i].dy = vecty / L;
-                }
-
-                if (L <= organisms[i].masa + food[j].value)
-                {
-                    food[j].alive = false;
                 }
 
                 float deltaX = organisms[i].dx * organisms[i].speed * dt;
@@ -119,16 +118,10 @@ int main(void)
                 organisms[i].x += deltaX;
                 organisms[i].y += deltaY;
 
-                // Рисуем организм: центр X, центр Y, радиус, цвет
-                DrawCircle(organisms[i].x, organisms[i].y ,organisms[i].masa , GREEN);
+                if (L <= organisms[i].masa + food[nearestFood].value) {
+                    food[nearestFood].alive = false;
+                }
             }
-
-            //рисуем еду
-            if (food[j].alive == true)
-            {
-                DrawCircle(food[j].x, food[j].y, food[j].value , RED);
-            }
-
         }
 
 
