@@ -67,7 +67,7 @@ int main(void)
         organisms[i].x = rand() % (900 - 100) + 100;
         organisms[i].y = rand() % (600 - 100) + 100;
         organisms[i].speed = rand() % (200 - 100) + 100;
-        organisms[i].masa = rand() % (50 - 30) + 30;
+        organisms[i].masa = rand() % (30 - 10) + 10;
         organisms[i].alive = true;
         organisms[i].dx = 0;
         organisms[i].dy = 0;
@@ -124,6 +124,17 @@ int main(void)
             }
         }
 
+        for (int i = 0; i < MAX_FOOD; i++) {
+            if (food[i].alive == true) {
+                DrawCircle(food[i].x, food[i].y, food[i].value, RED);
+            }
+        }
+
+        for (int i = 0; i < cout; i++) {
+            if (organisms[i].alive == true) {
+                DrawCircle(organisms[i].x, organisms[i].y, organisms[i].masa, GREEN);
+            }
+        }
 
         // Завершаем отрисовку кадра
         EndDrawing();
