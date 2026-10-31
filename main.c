@@ -42,7 +42,13 @@ int main(void)
     float vectx;
     float vecty;
 
+    float deltaX;
+    float deltaY;
+
     int cout = 10;
+
+    float DisBet;
+    float SlabSize;
 
     struct eat *food = (struct eat *)malloc(MAX_FOOD * sizeof(struct eat));
     if (food == NULL) {
@@ -87,6 +93,31 @@ int main(void)
         // Очищаем экран тёмным цветом
         ClearBackground((Color){20, 24, 35, 255});
         dt = GetFrameTime();
+        //проверка столкновений
+        for (int i = 0; i < cout; i++) {
+            for (int j = 0; j < cout; j++) {
+                if (i != j) {
+                    vectx = organisms[j].x - organisms[i].x;
+                    vecty = organisms[j].y - organisms[i].y;
+
+                    L = sqrtf((vectx * vectx) + (vecty * vecty));
+                    DisBet = organisms[i].masa + organisms[j].masa;
+                    if (L < DisBet) {
+                        SlabSize = DisBet - L;
+
+                        organisms[i].dx = vectx / L;
+                        organisms[i].dy = vecty / L;
+
+                        deltaX = organisms[i].dx * (SlabSize/2);
+                        deltaY = organisms[i].dy * (SlabSize/2);
+
+                        organisms[i].x -= deltaX;
+                        organisms[i].y -= deltaY;
+                    }
+                }
+            }
+        }
+        //проверка на еду кушать і поіск еди
         for (int i = 0; i < cout; i++) {
             int nearestFood = -1;
             float minDistans = 100000;
@@ -112,8 +143,8 @@ int main(void)
                     organisms[i].dy = vecty / L;
                 }
 
-                float deltaX = organisms[i].dx * organisms[i].speed * dt;
-                float deltaY = organisms[i].dy * organisms[i].speed * dt;
+                deltaX = organisms[i].dx * organisms[i].speed * dt;
+                deltaY = organisms[i].dy * organisms[i].speed * dt;
 
                 organisms[i].x += deltaX;
                 organisms[i].y += deltaY;
@@ -123,13 +154,13 @@ int main(void)
                 }
             }
         }
-
+        //рисуем еду
         for (int i = 0; i < MAX_FOOD; i++) {
             if (food[i].alive == true) {
                 DrawCircle(food[i].x, food[i].y, food[i].value, RED);
             }
         }
-
+        //рисуем агент
         for (int i = 0; i < cout; i++) {
             if (organisms[i].alive == true) {
                 DrawCircle(organisms[i].x, organisms[i].y, organisms[i].masa, GREEN);
